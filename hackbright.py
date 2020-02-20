@@ -106,6 +106,22 @@ def assign_grade(github, title, grade):
     print(f"Successfully added grade: {github} {title} {grade}")
 
 
+def add_project(title, description, max_grade):
+    """ """
+    QUERY = """
+        INSERT INTO projects (title, description, max_grade)
+          VALUES (:new_title, :new_description, :new_max_grade)
+        """
+
+    db.session.execute(QUERY, {'new_title': title,
+                               'new_description': description,
+                               'new_max_grade': max_grade})
+
+    db.session.commit()
+
+    print(f"Successfully added project: {title} {description} {max_grade}")
+
+
 def handle_input():
     """Main loop.
 
@@ -117,7 +133,7 @@ def handle_input():
 
     while command != "quit":
         input_string = input("HBA Database> ")
-        tokens = input_string.split()
+        tokens = input_string.split(", ")
         command = tokens[0]
         args = tokens[1:]
 
@@ -141,6 +157,10 @@ def handle_input():
             github, title, grade = args
             assign_grade(github, title, grade)
 
+        elif command == "add_project":
+            title, description, max_grade = args
+            add_project(title, description, max_grade)
+
         else:
             if command != "quit":
                 print("Invalid Entry. Try again.")
@@ -148,6 +168,8 @@ def handle_input():
 
 if __name__ == "__main__":
     connect_to_db(app)
+
+    print("Please include a comma followed by a space between each command or argument.")
 
     handle_input()
 
